@@ -9,7 +9,6 @@ const fastify = Fastify({
 
 fastify.register(dbConnector);
 fastify.register(firstRoute.routesFirst);
-fastify.register(db);
 
 fastify.listen({ port: 4000 }, function (err, address) {
   if (err) {
@@ -17,5 +16,3 @@ fastify.listen({ port: 4000 }, function (err, address) {
     process.exit(1);
   }
 });
-
-db.authenticate().catch((error) => console.error(error));
