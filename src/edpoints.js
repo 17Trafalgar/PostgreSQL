@@ -6,16 +6,11 @@ async function routesUser(fastify, options) {
     const userEmail = request.body.email;
     const userPassword = request.body.password;
     const userBalance = request.body.balance;
-    await user
-      .create({
-        email: userEmail,
-        password: userPassword,
-        balance: userBalance,
-      })
-      .then(() => {
-        reply.redirect('/');
-      })
-      .catch((err) => console.log(err));
+    await user.create({
+      email: userEmail,
+      password: userPassword,
+      balance: userBalance,
+    });
   });
 
   fastify.post('/UpCash', async (request, reply) => {
@@ -23,12 +18,7 @@ async function routesUser(fastify, options) {
     const userBalance = request.body.balance;
     const userEmail = request.body.email;
     const userPassword = request.body.password;
-    await user
-      .increment('balance', { by: userBalance, where: { email: userEmail, password: userPassword } })
-      .then(() => {
-        reply.redirect('/');
-      })
-      .catch((err) => console.log(err));
+    await user.increment('balance', { by: userBalance, where: { email: userEmail, password: userPassword } });
   });
 
   fastify.post('/DownCash', async (request, reply) => {
@@ -36,12 +26,7 @@ async function routesUser(fastify, options) {
     const userBalance = request.body.balance;
     const userEmail = request.body.email;
     const userPassword = request.body.password;
-    await user
-      .decrement('balance', { by: userBalance, where: { email: userEmail, password: userPassword } })
-      .then(() => {
-        reply.redirect('/');
-      })
-      .catch((err) => console.log(err));
+    await user.decrement('balance', { by: userBalance, where: { email: userEmail, password: userPassword } });
   });
 }
 
