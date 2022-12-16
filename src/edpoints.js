@@ -25,7 +25,7 @@ async function routesUser(fastify, options) {
       const userEmail = request.body.email;
       const userPassword = request.body.password;
       await user.increment('balance', { by: userBalance, where: { email: userEmail, password: userPassword } });
-      return 'Баланс пополнен на сумму: ' + `${userBalance}`;
+      return 'Баланс пользователя ' + `${userEmail}` + ' пополнен на сумму: ' + `${userBalance}`;
     } catch (error) {
       throw new Error('Ошибка пополнения баланса');
     }
@@ -33,14 +33,16 @@ async function routesUser(fastify, options) {
 
   fastify.post('/DownCash', async (request, reply) => {
     if (!request.body) return reply.sendStatus(400);
-    try {
-      const userBalance = request.body.balance;
-      const userEmail = request.body.email;
-      const userPassword = request.body.password;
-      await user.decrement({ balance: userBalance }, { where: { email: userEmail, password: userPassword } });
-      return 'С баланса списана сумма: ' + `${userBalance}`;
-    } catch (error) {
-      throw new Error('Ошибка списания баланса');
+    const userBalance = request.body.balance;
+    const userEmail = request.body.email;
+    const userPassword = request.body.password;
+    const client = await user.findOne({ where: { email: request.body.email, password: request.body.password } });
+    if (!client) {
+      throw new Error('Пользователь не найден');
+    } else if (client.balance - userBalance >= 0) {
+      return await client.decrement({ balance: userBalance }, { where: { email: userEmail, password: userPassword } });
+    } else {
+      throw new Error('На вашем балансе недостаточно средств');
     }
   });
 }
